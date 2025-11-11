@@ -72,6 +72,7 @@ jobs:
 
       - name: Upload Trivy scan results for API to GitHub Security tab
         uses: github/codeql-action/upload-sarif@5d5cd550d3e189c569da8f16ea8de2d821c9bf7a # v3.31.2
+        continue-on-error: true
         if: always()
         with:
           sarif_file: 'trivy-api-results.sarif'
@@ -79,6 +80,7 @@ jobs:
 
       - name: Upload Trivy scan results for Frontend to GitHub Security tab
         uses: github/codeql-action/upload-sarif@5d5cd550d3e189c569da8f16ea8de2d821c9bf7a # v3.31.2
+        continue-on-error: true
         if: always()
         with:
           sarif_file: 'trivy-frontend-results.sarif'
