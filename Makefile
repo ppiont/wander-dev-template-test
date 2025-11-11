@@ -1,4 +1,4 @@
-.PHONY: help dev down logs logs-% clean init-frontend init-api services
+.PHONY: help init dev down logs logs-% clean init-frontend init-api services
 
 COMPOSE_CMD := docker compose
 ENV_FILE := .env
@@ -19,13 +19,25 @@ help: ## Show available commands
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' Makefile | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
 	@echo ""
 
-dev: ## Start all services
-	@[ -f $(ENV_FILE) ] || { echo "Creating .env..."; ./scripts/init.sh; }
-	@$(COMPOSE_CMD) up -d db redis
-	@[ -f src/api/package.json ] && $(COMPOSE_CMD) --profile app up -d api || true
-	@[ -f src/frontend/package.json ] && $(COMPOSE_CMD) --profile app up -d frontend || true
+init: ## Initialize frontend + API (optional - 'make dev' does this automatically)
+	@$(MAKE) init-frontend
+	@$(MAKE) init-api
 	@echo ""
-	@echo "Services started. Use 'make logs' to view output."
+	@echo "✅ Frontend and API initialized! Run 'make dev' to start all services."
+	@echo ""
+
+dev: ## Start all services (auto-initializes frontend/api if missing)
+	@[ -f $(ENV_FILE) ] || { echo "Creating .env..."; ./scripts/init.sh; }
+	@[ -f src/frontend/package.json ] || { echo ""; echo "🎨 Frontend not initialized - running make init-frontend..."; echo ""; $(MAKE) init-frontend; }
+	@[ -f src/api/package.json ] || { echo ""; echo "🚀 API not initialized - running make init-api..."; echo ""; $(MAKE) init-api; }
+	@$(COMPOSE_CMD) up -d db redis
+	@$(COMPOSE_CMD) --profile app up -d api frontend
+	@echo ""
+	@echo "✅ All services started. Use 'make logs' to view output."
+	@echo ""
+	@echo "Access:"
+	@echo "  Frontend: http://localhost:3000"
+	@echo "  API:      http://localhost:8080/health"
 	@echo ""
 
 down: ## Stop all services

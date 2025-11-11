@@ -1,6 +1,6 @@
 # 🚀 Wander Dev Template
 
-**Clone → Init → Code in under 5 minutes**
+**Clone → Single Command → Code Immediately** (< 5 minutes)
 
 Zero-configuration development environment for full-stack applications. Get a complete local dev environment with Frontend (React + TypeScript + Vite + Tailwind), Backend API (Express + TypeScript), PostgreSQL 18, and Redis 8 running with a single command.
 
@@ -11,16 +11,24 @@ Zero-configuration development environment for full-stack applications. Get a co
 ```bash
 git clone <repo>
 cd <repo>
-make dev                     # Starts all services in Docker
+make dev                     # Auto-initializes frontend/api, starts all 4 services
 ```
 
+First run automatically:
+1. 🎨 Creates React + Vite + Tailwind frontend (if missing)
+2. 🚀 Creates Express + TypeScript API (if missing)
+3. 🐳 Builds Docker images
+4. ✅ Starts all services with health checks
+
 **Access:**
-- Frontend: http://localhost:3000
-- API: http://localhost:8080
+- Frontend: http://localhost:3000 (health dashboard)
+- API: http://localhost:8080/health (JSON status)
 - PostgreSQL: localhost:5432
 - Redis: localhost:6379
 
 **Stop everything:** `make down`
+
+**Subsequent runs:** Just `make dev` (skips initialization, starts services instantly)
 
 ---
 
@@ -40,7 +48,7 @@ make dev                     # Starts all services in Docker
 - ✅ **Hot Reload** - Instant code changes in browser and API
 - ✅ **Health Checks** - Automatic service health monitoring
 - ✅ **Pre-commit Hooks** - Auto-installed quality checks
-- ✅ **Smart Initialization** - Prompts to scaffold missing source code
+- ✅ **Smart Initialization** - Auto-scaffolds frontend/API on first run
 - ✅ **Colored Output** - Beautiful terminal feedback
 - ✅ **Error Handling** - Graceful failures with helpful messages
 
@@ -71,13 +79,14 @@ This template provides a complete developer onboarding experience:
 ### Available Commands
 
 ```bash
-# Setup
+# Setup (optional - 'make dev' does this automatically)
 make help           # Show all available commands
-make init-api       # Scaffold Express + TypeScript API
-make init-frontend  # Scaffold React + Vite + Tailwind frontend
+make init           # Initialize both frontend + API
+make init-api       # Scaffold Express + TypeScript API only
+make init-frontend  # Scaffold React + Vite + Tailwind frontend only
 
 # Development
-make dev            # Start all services in Docker
+make dev            # Start all services (auto-initializes if needed)
 
 # Monitoring
 make logs           # View all service logs (follow mode)
