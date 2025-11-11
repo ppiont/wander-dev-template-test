@@ -2,11 +2,15 @@
 
 environment: staging
 
+# Enable Ingress for staging
+ingress:
+  enabled: true
+
 # Lower resource limits for staging
 api:
   replicaCount: 1
   service:
-    type: LoadBalancer
+    type: ClusterIP
   resources:
     limits:
       cpu: 250m
@@ -17,6 +21,8 @@ api:
 
 frontend:
   replicaCount: 1
+  service:
+    type: ClusterIP
   resources:
     limits:
       cpu: 250m

@@ -28,7 +28,7 @@ spec:
         - name: NODE_ENV
           value: {{ .Values.environment }}
         - name: VITE_API_URL
-          value: "http://api:{{ .Values.api.service.port }}"
+          value: "/api"
         livenessProbe:
           httpGet:
             path: /
