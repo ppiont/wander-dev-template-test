@@ -116,36 +116,19 @@ jobs:
           gcloud container clusters get-credentials ${{ env.GKE_CLUSTER }} \
             --region=${{ env.GKE_REGION }}
 
-      - name: Create namespace if it doesn't exist
+      - name: Deploy to staging with Helm
         run: |
-          kubectl create namespace staging --dry-run=client -o yaml | kubectl apply -f -
-
-      - name: Deploy with Helm
-        uses: deliverybot/helm@1c1b8b6230001a6a3bdb3eee1e8e3f96cd14fca5 # v1
-        with:
-          release: ${{ secrets.PROJECT_NAME || 'wander-app' }}
-          namespace: staging
-          chart: ./helm/wander-app
-          task: upgrade-install
-          version: ${{ env.IMAGE_TAG }}
-          values: |
-            api:
-              image:
-                repository: ${{ env.ARTIFACT_REGISTRY }}/${{ env.REPOSITORY }}/api
-                tag: ${{ env.IMAGE_TAG }}
-            frontend:
-              image:
-                repository: ${{ env.ARTIFACT_REGISTRY }}/${{ env.REPOSITORY }}/frontend
-                tag: ${{ env.IMAGE_TAG }}
-            postgres:
-              auth:
-                password: ${{ secrets.DB_PASSWORD }}
-          value-files: >-
-            [
-              "./helm/wander-app/values-staging.yaml"
-            ]
-          helm: helm3
-          atomic: true
+          helm upgrade --install wander-app ./helm/wander-app \
+            --namespace staging \
+            --create-namespace \
+            --atomic \
+            --timeout 5m \
+            --values ./helm/wander-app/values-staging.yaml \
+            --set api.image.repository=${{ env.ARTIFACT_REGISTRY }}/${{ env.REPOSITORY }}/api \
+            --set api.image.tag=${{ env.IMAGE_TAG }} \
+            --set frontend.image.repository=${{ env.ARTIFACT_REGISTRY }}/${{ env.REPOSITORY }}/frontend \
+            --set frontend.image.tag=${{ env.IMAGE_TAG }} \
+            --set postgres.auth.password=${{ secrets.DB_PASSWORD }}
 
       - name: Verify deployment
         run: |
@@ -203,36 +186,19 @@ jobs:
           gcloud container clusters get-credentials ${{ env.GKE_CLUSTER }} \
             --region=${{ env.GKE_REGION }}
 
-      - name: Create namespace if it doesn't exist
+      - name: Deploy to production with Helm
         run: |
-          kubectl create namespace production --dry-run=client -o yaml | kubectl apply -f -
-
-      - name: Deploy with Helm
-        uses: deliverybot/helm@1c1b8b6230001a6a3bdb3eee1e8e3f96cd14fca5 # v1
-        with:
-          release: ${{ secrets.PROJECT_NAME || 'wander-app' }}
-          namespace: production
-          chart: ./helm/wander-app
-          task: upgrade-install
-          version: ${{ env.IMAGE_TAG }}
-          values: |
-            api:
-              image:
-                repository: ${{ env.ARTIFACT_REGISTRY }}/${{ env.REPOSITORY }}/api
-                tag: ${{ env.IMAGE_TAG }}
-            frontend:
-              image:
-                repository: ${{ env.ARTIFACT_REGISTRY }}/${{ env.REPOSITORY }}/frontend
-                tag: ${{ env.IMAGE_TAG }}
-            postgres:
-              auth:
-                password: ${{ secrets.DB_PASSWORD }}
-          value-files: >-
-            [
-              "./helm/wander-app/values-production.yaml"
-            ]
-          helm: helm3
-          atomic: true
+          helm upgrade --install wander-app ./helm/wander-app \
+            --namespace production \
+            --create-namespace \
+            --atomic \
+            --timeout 5m \
+            --values ./helm/wander-app/values-production.yaml \
+            --set api.image.repository=${{ env.ARTIFACT_REGISTRY }}/${{ env.REPOSITORY }}/api \
+            --set api.image.tag=${{ env.IMAGE_TAG }} \
+            --set frontend.image.repository=${{ env.ARTIFACT_REGISTRY }}/${{ env.REPOSITORY }}/frontend \
+            --set frontend.image.tag=${{ env.IMAGE_TAG }} \
+            --set postgres.auth.password=${{ secrets.DB_PASSWORD }}
 
       - name: Verify deployment
         id: get-url
