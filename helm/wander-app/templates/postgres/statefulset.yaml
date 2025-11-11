@@ -32,8 +32,6 @@ spec:
           value: {{ .Values.postgres.auth.username }}
         - name: POSTGRES_PASSWORD
           value: {{ .Values.postgres.auth.password }}
-        - name: PGDATA
-          value: /var/lib/postgresql/data/pgdata
         livenessProbe:
           exec:
             command:
@@ -59,6 +57,7 @@ spec:
         volumeMounts:
         - name: data
           mountPath: /var/lib/postgresql/data
+          subPath: pgdata
   volumeClaimTemplates:
   - metadata:
       name: data
