@@ -13,6 +13,7 @@ repos:
       - id: check-yaml
         exclude: ^helm/.*\.yaml$  # Exclude Helm templates (contain Helm template syntax)
       - id: check-json
+        exclude: tsconfig.*\.json$  # Exclude TypeScript config files (allow comments/trailing commas)
       - id: check-added-large-files
         args: [--maxkb=1000]
       - id: check-merge-conflict
