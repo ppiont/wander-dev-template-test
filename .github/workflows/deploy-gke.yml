@@ -37,13 +37,9 @@ jobs:
           workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ env.SERVICE_ACCOUNT }}
 
-      - name: Set up gcloud CLI
-        uses: google-github-actions/setup-gcloud@5a5f7b85fca43e76e53463acaa9d408a03c98d3a # v2.1.0
-        with:
-          project_id: ${{ env.PROJECT_ID }}
-
-      - name: Configure Docker for Artifact Registry
+      - name: Configure gcloud & Docker
         run: |
+          gcloud config set project ${{ env.PROJECT_ID }}
           gcloud auth configure-docker ${{ env.ARTIFACT_REGISTRY }} --quiet
 
       - name: Build and push Docker images
@@ -104,7 +100,7 @@ jobs:
           workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ env.SERVICE_ACCOUNT }}
 
-      - name: Set up gcloud CLI
+      - name: Configure gcloud
         run: |
           gcloud config set project ${{ env.PROJECT_ID }}
           gcloud components install gke-gcloud-auth-plugin --quiet
@@ -191,7 +187,7 @@ jobs:
           workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ env.SERVICE_ACCOUNT }}
 
-      - name: Set up gcloud CLI
+      - name: Configure gcloud
         run: |
           gcloud config set project ${{ env.PROJECT_ID }}
           gcloud components install gke-gcloud-auth-plugin --quiet
